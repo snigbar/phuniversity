@@ -6,4 +6,5 @@ export default {
   port: process.env.PORT,
   url: process.env.MONGO_URI,
   saltRound: process.env.SALT_ROUNDS,
+  defaultPassword: process.env.Default_Pass,
 }
