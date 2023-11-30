@@ -11,7 +11,7 @@ const createStudentInDB = async (password: string, student: TStudent) => {
   // assign role
   user.role = 'student'
   // assign Id
-  user.id = '123345'
+  user.id = '123346'
 
   const newUser = await userModel.create(user)
 
