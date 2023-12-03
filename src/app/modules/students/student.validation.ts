@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const userNameSchema = z.object({
+const userNameValidationSchema = z.object({
   firstName: z
     .string()
     .min(1)
@@ -8,11 +8,11 @@ const userNameSchema = z.object({
     .refine((value) => /^[A-Z]/.test(value), {
       message: 'First Name must start with a capital letter',
     }),
-  middleName: z.string(),
+  middleName: z.string().optional(),
   lastName: z.string(),
 })
 
-const guardianSchema = z.object({
+const guardianValidationSchema = z.object({
   fatherName: z.string(),
   fatherOccupation: z.string(),
   fatherContactNo: z.string(),
@@ -21,7 +21,7 @@ const guardianSchema = z.object({
   motherContactNo: z.string(),
 })
 
-const localGuardianSchema = z.object({
+const localGuardianValidationSchema = z.object({
   name: z.string(),
   occupation: z.string(),
   contactNo: z.string(),
@@ -32,17 +32,18 @@ const studentValidationSchema = z.object({
   body: z.object({
     password: z.string().min(8).max(20).optional(),
     student: z.object({
-      name: userNameSchema,
+      name: userNameValidationSchema,
       gender: z.enum(['male', 'female', 'other']),
-      dateOfBirth: z.string(),
+      dateOfBirth: z.string().optional(),
       email: z.string().email(),
       contactNo: z.string(),
       emergencyContactNo: z.string(),
       bloogGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
       presentAddress: z.string(),
       permanentAddress: z.string(),
-      guardian: guardianSchema,
-      localGuardian: localGuardianSchema,
+      guardian: guardianValidationSchema,
+      admissionSemester: z.string(),
+      localGuardian: localGuardianValidationSchema,
       profileImg: z.string(),
     }),
   }),
