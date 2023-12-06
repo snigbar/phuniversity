@@ -11,6 +11,13 @@ const createStudentIntoDB = async (studentData: TStudent) => {
 
 const getAllStudentsFromDB = async () => {
   const result = await StudentModel.find()
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    })
   return result
 }
 
