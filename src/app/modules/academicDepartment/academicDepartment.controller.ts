@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import academicDepartmentServices from './academicDepartment.services'
+import AppError from '../../errors/appError'
 
 const createAcademicDepartment = catchAsync(
   async (req: Request, res: Response) => {
@@ -38,7 +39,8 @@ const getSingleAcademicDepartment = catchAsync(
     const result =
       await academicDepartmentServices.getSingleDepartmentFromDB(departmentId)
 
-    if (!result) throw new Error('No matched document found')
+    if (!result)
+      throw new AppError(HttpStatus.NOT_FOUND, 'No matched document found')
 
     sendResponse(res, {
       success: true,
