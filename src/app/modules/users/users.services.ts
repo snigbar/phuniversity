@@ -48,12 +48,14 @@ const createStudentInDB = async (password: string, payload: TStudent) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create new Student')
     }
 
+    return newStudent
+
     await session.commitTransaction()
     await session.endSession()
   } catch (error) {
     await session.abortTransaction()
     await session.endSession()
-    throw new Error('Failed to delete student')
+    throw new Error('Failed to create student')
   }
 }
 
