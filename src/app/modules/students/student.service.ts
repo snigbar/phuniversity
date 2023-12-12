@@ -4,6 +4,7 @@ import { StudentModel } from './student.model'
 import AppError from '../../errors/appError'
 import httpStatus from 'http-status'
 import { userModel } from '../users/users.model'
+import QueryBuilder from '../../builder/QueryBuilder'
 
 const createStudentIntoDB = async (studentData: TStudent) => {
   if (await StudentModel.isUserExists(studentData.id)) {
@@ -16,66 +17,24 @@ const createStudentIntoDB = async (studentData: TStudent) => {
 const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const searchFields = ['email', 'name.firstName', 'presentAddress']
 
-  let search = ''
-  if (query?.search) {
-    search = query?.search as string
-  }
+  const studentQuery = new QueryBuilder(
+    StudentModel.find()
+      .populate('admissionSemester')
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+        },
+      }),
+    query,
+  )
+    .search(searchFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields()
 
-  // filtering
-
-  const excludefields = ['search', 'sort', 'limit', 'page', 'fields']
-  const queryObj = { ...query }
-  excludefields.forEach((el) => delete queryObj[el])
-
-  const searchQuery = StudentModel.find({
-    $or: searchFields.map((field) => ({
-      [field]: { $regex: search, $options: 'i' },
-    })),
-  })
-
-  const filterQuery = searchQuery
-    .find(queryObj)
-    .populate('admissionSemester')
-    .populate({
-      path: 'academicDepartment',
-      populate: {
-        path: 'academicFaculty',
-      },
-    })
-
-  // sorting
-  let sort = '-createdAt'
-
-  if (query?.sort) {
-    sort = query.sort as string
-  }
-
-  // limit
-  const limitQuery = filterQuery.sort(sort)
-
-  const paginateQuery =
-    query && query.limit ? limitQuery.limit(Number(query.limit)) : limitQuery
-
-  let page = 1
-  let skip = 0
-
-  if (query?.page && query.limit) {
-    page = Number(query.page)
-    skip = (page - 1) * Number(query?.limit)
-  }
-
-  const fieldsQuery = paginateQuery.skip(skip)
-
-  // field filtering
-
-  let fields: string | object
-  if (query?.fields && typeof query?.fields === 'string') {
-    fields = query.fields.split(',').join(' ')
-  } else {
-    fields = {}
-  }
-
-  const result = fieldsQuery.select(fields as string)
+  const result = await studentQuery.modelQuery
 
   return result
 }
