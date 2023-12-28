@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
 import QueryBuilder from '../../builder/QueryBuilder'
 import { searchableCourseFields } from './course.constant'
-import { TCourse } from './course.interface'
-import CourseModel from './course.model'
+import { TCourse, TCourseFaculties } from './course.interface'
+import CourseModel, { CourseFacultiesModel } from './course.model'
 import AppError from '../../errors/appError'
 import httpStatus from 'http-status'
 
@@ -38,7 +38,7 @@ const updateCourseintoDB = async (id: string, payload: Partial<TCourse>) => {
   const session = await mongoose.startSession()
 
   try {
-    await session.startTransaction()
+    session.startTransaction()
     const updatedData = await CourseModel.findByIdAndUpdate(
       id,
       updateCourseInfo,
@@ -105,10 +105,36 @@ const updateCourseintoDB = async (id: string, payload: Partial<TCourse>) => {
   }
 }
 
+const assignFacultiestoCourseInDB = async (
+  id: string,
+  payload: Partial<TCourseFaculties>,
+) => {
+  const result = await CourseFacultiesModel.findByIdAndUpdate(
+    id,
+    { $addToSet: { course: id, faculties: { $each: payload } } },
+    { upsert: true, new: true },
+  )
+  return result
+}
+
+const removeFacultiesfromCourseInDB = async (
+  id: string,
+  payload: Partial<TCourseFaculties>,
+) => {
+  const result = await CourseFacultiesModel.findByIdAndUpdate(
+    id,
+    { $pull: { faculties: { $in: payload } } },
+    { new: true },
+  )
+  return result
+}
+
 export const courseServices = {
   createCourseIntoDB,
   getSingleCourseFromDB,
   getAllCourseFromDB,
   deleteCourseInDB,
   updateCourseintoDB,
+  assignFacultiestoCourseInDB,
+  removeFacultiesfromCourseInDB,
 }

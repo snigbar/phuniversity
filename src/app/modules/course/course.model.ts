@@ -1,4 +1,8 @@
-import { TCourse, TPreRequisiteCourses } from './course.interface'
+import {
+  TCourse,
+  TCourseFaculties,
+  TPreRequisiteCourses,
+} from './course.interface'
 import mongoose, { Schema } from 'mongoose'
 
 const preRequisiteSchema = new mongoose.Schema<TPreRequisiteCourses>(
@@ -47,6 +51,24 @@ const courseSchema = new mongoose.Schema<TCourse>(
   { timestamps: true },
 )
 
+const courseFacultiesSchema = new mongoose.Schema<TCourseFaculties>({
+  course: {
+    type: Schema.ObjectId,
+    unique: true,
+    ref: 'Course',
+  },
+  faculties: [
+    {
+      type: Schema.ObjectId,
+      ref: 'Faculty',
+    },
+  ],
+})
+
 const CourseModel = mongoose.model<TCourse>('Course', courseSchema)
+export const CourseFacultiesModel = mongoose.model<TCourseFaculties>(
+  'CourseFaculties',
+  courseFacultiesSchema,
+)
 
 export default CourseModel

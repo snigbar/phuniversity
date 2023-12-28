@@ -1,5 +1,5 @@
-import { z } from 'zod';
-import { BloodGroup, Gender } from './faculty.constant';
+import { z } from 'zod'
+import { BloodGroup, Gender } from './faculty.constant'
 
 const createUserNameValidationSchema = z.object({
   firstName: z
@@ -11,11 +11,11 @@ const createUserNameValidationSchema = z.object({
     }),
   middleName: z.string(),
   lastName: z.string(),
-});
+})
 
 export const createFacultyValidationSchema = z.object({
   body: z.object({
-    password: z.string().max(20),
+    password: z.string().max(20).optional(),
     faculty: z.object({
       designation: z.string(),
       name: createUserNameValidationSchema,
@@ -24,20 +24,20 @@ export const createFacultyValidationSchema = z.object({
       email: z.string().email(),
       contactNo: z.string(),
       emergencyContactNo: z.string(),
-      bloogGroup: z.enum([...BloodGroup] as [string, ...string[]]),
+      bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]),
       presentAddress: z.string(),
       permanentAddress: z.string(),
       academicDepartment: z.string(),
       profileImg: z.string(),
     }),
   }),
-});
+})
 
 const updateUserNameValidationSchema = z.object({
   firstName: z.string().min(1).max(20).optional(),
   middleName: z.string().optional(),
   lastName: z.string().optional(),
-});
+})
 
 export const updateFacultyValidationSchema = z.object({
   body: z.object({
@@ -56,9 +56,9 @@ export const updateFacultyValidationSchema = z.object({
       academicDepartment: z.string().optional(),
     }),
   }),
-});
+})
 
-export const studentValidations = {
+export const FacultyValidations = {
   createFacultyValidationSchema,
   updateFacultyValidationSchema,
-};
+}
