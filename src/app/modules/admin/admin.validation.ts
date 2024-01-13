@@ -1,11 +1,11 @@
-import { z } from 'zod';
-import { BloodGroup, Gender } from './admin.constant';
+import { z } from 'zod'
+import { BloodGroup, Gender } from './admin.constant'
 
 const createUserNameValidationSchema = z.object({
   firstName: z.string().min(1).max(20),
   middleName: z.string().max(20),
   lastName: z.string().max(20),
-});
+})
 
 export const createAdminValidationSchema = z.object({
   body: z.object({
@@ -21,16 +21,15 @@ export const createAdminValidationSchema = z.object({
       bloogGroup: z.enum([...BloodGroup] as [string, ...string[]]),
       presentAddress: z.string(),
       permanentAddress: z.string(),
-      profileImg: z.string(),
     }),
   }),
-});
+})
 
 const updateUserNameValidationSchema = z.object({
   firstName: z.string().min(3).max(20).optional(),
   middleName: z.string().min(3).max(20).optional(),
   lastName: z.string().min(3).max(20).optional(),
-});
+})
 
 export const updateAdminValidationSchema = z.object({
   body: z.object({
@@ -48,9 +47,9 @@ export const updateAdminValidationSchema = z.object({
       profileImg: z.string().optional(),
     }),
   }),
-});
+})
 
 export const AdminValidations = {
   createAdminValidationSchema,
   updateAdminValidationSchema,
-};
+}
